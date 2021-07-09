@@ -1,40 +1,52 @@
+from re import sub
 import discord
+#from praw.reddit import Submission
+disc_token='' #enter ur discord bot token
+reddit_sec='' #enter ur secret reddit key
+reddit_app_id='' #enter ur reddit app id
 import praw
+import random
+import asyncpraw
 from discord.colour import Color
 
 from discord.ext import commands
 
-client=commands.Bot(command_prefix='cd ',description=None)
+client=commands.Bot(command_prefix='!',description=None)
 
-@client.command(name='version')
-async def version(context):
-    myEmbed = discord.Embed(title="Current Version", description="The bot version is 1.0",Color=0x00ff00)
-    myEmbed.add_field(name="Version Code: ",value="v1.0.0", inline=False)
-    myEmbed.add_field(name="Date Released: ", value="25th June 2021",inline=False)
-    myEmbed.set_footer(text="This is a sample footer")
-    myEmbed.set_author(name="Darshil Shah")
-
-    await context.message.channel.send(embed=myEmbed)
-
-@client.command(name="ping")
-async def ping(context):
-    await context.message.channel.send("cd pong")
+REDDIT_ENABLED_SUBREDDITS=['r/entrepreneur','r/investing','r/BusinessHub']
 
 
+reddit=praw.Reddit(client_id='',        #enter ur reddit app id
+                    client_secret='',  #enter ur secret reddit key
+                    user_agent="trial"
+)
 
+#subreddit= reddit.subreddit("desimemes")
 
 @client.event
 async def on_ready():
-    general_channel=client.get_channel(850599495023591454)
-    await general_channel.send("The bot is online")
+    print("ready")
+
+@client.command()
+async def trial(ctx):
+    subreddit= reddit.subreddit("IndianDankMemes")
+    top=subreddit.hot(limit=50)
+    all_subs=[]
+
+    for submission in top:
+        all_subs.append(submission)
+    random_sub=random.choice(all_subs)
+    name=random_sub.title
+    #url=random_sub.url
+    #em=discord.Embed(title=name)
+    #em.set_image(url=url)
+    #await ctx.channel.send("Here's a link to the subreddit: \n{}".format(url))
+    embed = discord.Embed(title=name, url=random_sub.url,
+                           color=discord.Color.random(),
+                           )
+    embed.set_image(url=random_sub.url)
+    await ctx.send(embed=embed)
 
 
-
-
-async def on_message(self,message):
-    
-    if message.content== "RAMDI.ping":
-        await message.channel.send("RAMDI.pong")
-        
-client.run('ODU3OTUyMjM1OTEyNDI5NTY5.YNXESQ.zsCcEJYzRyepzfY23tvNyd3ReZs')
+client.run(disc_token)
 
