@@ -11,25 +11,27 @@ from discord.colour import Color
 
 from discord.ext import commands
 
-client=commands.Bot(command_prefix='!',description=None)
+client=commands.Bot(command_prefix='.',description=None)
 
 REDDIT_ENABLED_SUBREDDITS=['r/entrepreneur','r/investing','r/BusinessHub']
 
 
-reddit=praw.Reddit(client_id='',        #enter ur reddit app id
-                    client_secret='',  #enter ur secret reddit key
+reddit=praw.Reddit(client_id='66q44f4e7k-W9g',
+                    client_secret='78Xzv77rYyxq2Nd4vGXhbZ2JCtmQBg',
                     user_agent="trial"
 )
 
-#subreddit= reddit.subreddit("desimemes")
+subreddit= reddit.subreddit("desimemes")
 
 @client.event
 async def on_ready():
     print("ready")
 
 @client.command()
-async def trial(ctx):
-    subreddit= reddit.subreddit("IndianDankMemes")
+async def imemes(ctx):
+    meme_choices=["IndianDankMemes","dankinindia","IndianMeyMeys"]
+    x=random.choice(meme_choices)
+    subreddit= reddit.subreddit(x)
     top=subreddit.hot(limit=50)
     all_subs=[]
 
@@ -37,10 +39,27 @@ async def trial(ctx):
         all_subs.append(submission)
     random_sub=random.choice(all_subs)
     name=random_sub.title
-    #url=random_sub.url
-    #em=discord.Embed(title=name)
-    #em.set_image(url=url)
-    #await ctx.channel.send("Here's a link to the subreddit: \n{}".format(url))
+    
+    embed = discord.Embed(title=name, url=random_sub.url,
+                           color=discord.Color.random(),
+                           )
+    embed.set_image(url=random_sub.url)
+    await ctx.send(embed=embed)
+
+
+@client.command()
+async def progmemes(ctx):
+    meme_choices=["ProgrammerHumor","programmingmemes"]
+    x=random.choice(meme_choices)
+    subreddit= reddit.subreddit(x)
+    top=subreddit.hot(limit=50)
+    all_subs=[]
+
+    for submission in top:
+        all_subs.append(submission)
+    random_sub=random.choice(all_subs)
+    name=random_sub.title
+    
     embed = discord.Embed(title=name, url=random_sub.url,
                            color=discord.Color.random(),
                            )
