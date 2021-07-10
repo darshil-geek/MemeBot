@@ -2,9 +2,7 @@ from re import sub
 import discord
 #from praw.reddit import Submission
 disc_token='' #enter ur discord bot token
-reddit_sec='' #enter ur secret reddit key
-reddit_app_id='' #enter ur reddit app id
-import praw
+
 import random
 import asyncpraw
 from discord.colour import Color
@@ -16,8 +14,8 @@ client=commands.Bot(command_prefix='.',description=None)
 REDDIT_ENABLED_SUBREDDITS=['r/entrepreneur','r/investing','r/BusinessHub']
 
 
-reddit=praw.Reddit(client_id='66q44f4e7k-W9g',
-                    client_secret='78Xzv77rYyxq2Nd4vGXhbZ2JCtmQBg',
+reddit=praw.Reddit(client_id='', #enter ur reddit app id
+                    client_secret='',#enter ur secret reddit key
                     user_agent="trial"
 )
 
@@ -28,8 +26,31 @@ async def on_ready():
     print("ready")
 
 @client.command()
-async def imemes(ctx):
-    meme_choices=["IndianDankMemes","dankinindia","IndianMeyMeys"]
+async def sr(ctx):
+    meme_choices=["Semenretention"]
+    x=random.choice(meme_choices)
+    subreddit= await reddit.subreddit(x)
+    #top=subreddit.hot(limit=50)
+    all_subs=[]
+
+    
+    async for submission in subreddit.hot(limit=50):
+        all_subs.append(submission)
+    random_sub=random.choice(all_subs)
+    name=random_sub.title
+    
+    text=''.join(random_sub.selftext)
+    
+    embed = discord.Embed(title=name, url=random_sub.url,
+                            description=text,
+                           color=discord.Color.random(),
+                           )
+    await ctx.send(embed=embed)
+
+
+@client.command()
+async def bnews(ctx):
+    meme_choices=["investing"]
     x=random.choice(meme_choices)
     subreddit= reddit.subreddit(x)
     top=subreddit.hot(limit=50)
@@ -39,13 +60,13 @@ async def imemes(ctx):
         all_subs.append(submission)
     random_sub=random.choice(all_subs)
     name=random_sub.title
+    text=''.join(random_sub.selftext)
     
     embed = discord.Embed(title=name, url=random_sub.url,
+                            description=text,
                            color=discord.Color.random(),
                            )
-    embed.set_image(url=random_sub.url)
     await ctx.send(embed=embed)
-
 
 @client.command()
 async def progmemes(ctx):
